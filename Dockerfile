@@ -1,6 +1,7 @@
 # Container image that runs your code
-FROM python:3.8-slim-buster
-
+FROM python:3.8-alpine
+RUN apk update
+RUN apk add git
 # Copies your code file from your action repository to the filesystem path `/` of the container
 COPY . action
 RUN ls
