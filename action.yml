@@ -21,7 +21,7 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.github_token }}
     - ${{ inputs.target_branch }}
     - ${{ inputs.base_branch }}
     - ${{ inputs.pr_branch }}
+    - ${{ inputs.github_token }}

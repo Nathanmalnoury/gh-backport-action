@@ -5,5 +5,5 @@ FROM python:3.8-slim-buster
 COPY src/main.py /main.py
 
 # Code file to execute when the docker container starts up (`entrypoint.sh`)
-
+RUN ls
 ENTRYPOINT ["python", "main.py"]
