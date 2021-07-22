@@ -1,0 +1,24 @@
+name: Backport
+author: Nathan Malnoury
+description: Automatically backport a PR onto another branch, based on cherry-pick-ing.
+inputs:
+  github_token:
+    description: Token for the GitHub API.
+    required: true
+  target_branch:
+    description: Branch whose commits need backport (ie. target in PR)
+    required: true
+  base_branch:
+    description: Base to compare target_branch with (ie. base in PR)
+    required: true
+  pr_branch:
+    description: Branch to open new PR on.
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.github_token }}
+    - ${{ inputs.target_branch }}
+    - ${{ inputs.base_branch }}
+    - ${{ inputs.pr_branch }}
