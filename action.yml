@@ -1,4 +1,4 @@
-name: Backport
+name: Backport PR by cherry-pick-ing
 author: Nathan Malnoury
 description: Automatically backport a PR onto another branch, based on cherry-pick-ing.
 inputs:
@@ -14,6 +14,9 @@ inputs:
   pr_branch:
     description: Branch to open new PR on.
     required: true
+branding:
+  icon: chevron-left
+  color: gray-dark
 runs:
   using: 'docker'
   image: 'Dockerfile'
