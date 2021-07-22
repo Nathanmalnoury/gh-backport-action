@@ -4,7 +4,6 @@ To consider:
  - Branch deletion of the duplicated target branch
 """
 import argparse
-import os
 import random
 import subprocess
 from pathlib import Path
