@@ -2,17 +2,17 @@ name: Backport PR by cherry-pick-ing
 author: Nathan Malnoury
 description: Automatically backport a PR onto another branch, based on cherry-pick-ing.
 inputs:
-  github_token:
-    description: Token for the GitHub API.
-    required: true
-  target_branch:
-    description: Branch whose commits need backport (ie. target in PR)
-    required: true
   base_branch:
     description: Base to compare target_branch with (ie. base in PR)
     required: true
+  target_branch:
+      description: Branch whose commits need backport (ie. target in PR)
+      required: true
   pr_branch:
     description: Branch to open new PR on.
+    required: true
+  github_token:
+    description: Token for the GitHub API.
     required: true
 branding:
   icon: chevron-left
