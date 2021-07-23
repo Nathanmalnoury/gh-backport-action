@@ -1,15 +1,17 @@
 # gh-backport-action
 Github action to backport PR.
 
-## Targetted usage: 
+## Targetted usage:
 
 ```yaml
 name: PR for release branch
 on:
-  push:
+  pull_request:
     branches: [ master ]
+    types: [ closed ]
 jobs:
   release_pull_request:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     name: release_pull_request
     steps:
@@ -19,8 +21,5 @@ jobs:
       uses: Nathanmalnoury/gh-backport-action@master
       with:
         pr_branch: 'recette'
-        
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
