@@ -23,7 +23,7 @@ def release(initial_name: str, to_branch: str):
     """
 
     new_branch = f"release-{initial_name[:15]}-{datetime.utcnow().strftime('%m%d%y')}-{to_branch}"
-    git("switch", "-c", new_branch, "origin/" + to_branch)
+    git("switch", "-c", new_branch, "origin/" + initial_name)
     print(f"Switched to future branch: {new_branch}.")
 #     try:
 #         for commit_hash in commits:
