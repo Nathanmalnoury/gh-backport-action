@@ -17,20 +17,20 @@ from helpers import (
 )
 
 
-def backport_commits(commits: typing.List[str], initial_name: str, to_branch: str):
+def release(initial_name: str, to_branch: str):
     """
     Backport a list of commit on a *new* branch starting from to_branch.
     """
 
-    new_branch = f"backport-{initial_name[:15]}-{datetime.utcnow().strftime('%m%d%y')}-{to_branch}"
+    new_branch = f"release-{initial_name[:15]}-{datetime.utcnow().strftime('%m%d%y')}-{to_branch}"
     git("switch", "-c", new_branch, "origin/" + to_branch)
     print(f"Switched to future branch: {new_branch}.")
-    try:
-        for commit_hash in commits:
-            git("cherry-pick", commit_hash)
-    except:
-        print("An error occurred while cherry-picking.")
-        raise RuntimeError("Could not cherry pick at least one commit automatically.")
+#     try:
+#         for commit_hash in commits:
+#             git("cherry-pick", commit_hash)
+#     except:
+#         print("An error occurred while cherry-picking.")
+#         raise RuntimeError("Could not cherry pick at least one commit automatically.")
 
     git("push", "-u", "origin", new_branch)
     return new_branch
@@ -40,22 +40,22 @@ def entrypoint(event_dict, pr_branch, gh_token):
     base_branch = _get_base_branch(event_dict)
     pr_number = _get_pr_number(event_dict)
 
-    commits_to_backport = github_get_commits_in_pr(pr_number=pr_number, gh_token=gh_token)
+#     commits_to_backport = github_get_commits_in_pr(pr_number=pr_number, gh_token=gh_token)
 
-    print(f"found {len(commits_to_backport)} commits to backport.")
+#     print(f"found {len(commits_to_backport)} commits to release.")
 
-    new_branch = backport_commits(commits_to_backport, base_branch, pr_branch)
+    new_branch = release(base_branch, pr_branch)
     github_open_pull_request(
-        title=f"chore: backport #{pr_number} into {pr_branch}",
+        title=f"chore: release #{pr_number} into {pr_branch}",
         head=new_branch,
         base=pr_branch,
-        body=f"An automated backport for #{pr_number}.",
+        body=f"An automated release for #{pr_number}.",
         gh_token=gh_token,
     )
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="automated backport GH action.")
+    parser = argparse.ArgumentParser(description="automated release GH action.")
     parser.add_argument("pr_branch", type=str)
     parser.add_argument("github_token", type=str)
     github_event_path = os.getenv("GITHUB_EVENT_PATH")
@@ -76,7 +76,7 @@ if __name__ == "__main__":
         traceback_formatted_for_body = f"\n```python\n{main_traceback}```"
         try:
             pr_num = _get_pr_number(event_dict=github_event)
-            title = f"Could not automatically backport #{pr_num}"
+            title = f"Could not automatically release #{pr_num}"
             body = f"Exception occurred when trying to cherry-pick PR #{pr_num}.\nPlease cherry-pick it manually."
             body += traceback_formatted_for_body
             github_open_issue(title, body, gh_token=args.github_token)
@@ -85,7 +85,7 @@ if __name__ == "__main__":
             pass
         try:
             tar_branch = _get_target_branch(event_dict=github_event)
-            title = f"Could not automatically backport branch {tar_branch}"
+            title = f"Could not automatically release branch {tar_branch}"
             body = f"Exception occurred when trying to cherry-pick PR commits of `{tar_branch}`.\nPlease cherry-pick it manually."
             body += traceback_formatted_for_body
 
@@ -95,7 +95,7 @@ if __name__ == "__main__":
             pass
         try:
             title = f"Automatic Backport failed"
-            body = f"Exception occurred when trying to backport a branch.\nCheck `actions` tab to see more."
+            body = f"Exception occurred when trying to release a branch.\nCheck `actions` tab to see more."
             body += traceback_formatted_for_body
             github_open_issue(title, body, gh_token=args.github_token)
             exit(1)
