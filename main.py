@@ -17,12 +17,12 @@ from helpers import (
 )
 
 
-def release(initial_name: str, to_branch: str):
+def release(initial_name: str, to_branch: str, pr_number: str):
     """
     Backport a list of commit on a *new* branch starting from to_branch.
     """
 
-    new_branch = f"release-{initial_name[:15]}-{datetime.utcnow().strftime('%m%d%y')}-{to_branch}"
+    new_branch = f"release-{initial_name[:15]}-{pr_number}-{to_branch}"
     git("switch", "-c", new_branch, "origin/" + initial_name)
     print(f"Switched to future branch: {new_branch}.")
 #     try:
@@ -44,7 +44,7 @@ def entrypoint(event_dict, pr_branch, gh_token):
 
 #     print(f"found {len(commits_to_backport)} commits to release.")
 
-    new_branch = release(base_branch, pr_branch)
+    new_branch = release(base_branch, pr_branch, pr_number)
     github_open_pull_request(
         title=f"chore: release #{pr_number} into {pr_branch}",
         head=new_branch,
