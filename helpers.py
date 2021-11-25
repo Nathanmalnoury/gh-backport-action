@@ -75,7 +75,7 @@ def _github_repo_url():
     return f"{api_url}/repos/{repo}"
 
 
-def github_open_pull_request(title: str, body: str, head: str, base: str, gh_token: str):
+def github_open_pull_request(title: str, body: str, head: str, base: str, gh_token: str) -> int:
     headers = github_api_headers(gh_token=gh_token)
     body = {
         "head": head,
@@ -86,8 +86,7 @@ def github_open_pull_request(title: str, body: str, head: str, base: str, gh_tok
 
     response = requests.post(url=f"{_github_repo_url()}/pulls", json=body, headers=headers)
     response.raise_for_status()
-    print(response.json())
-    response.json()["number"]
+    return response.json()["number"]
 
 
 def github_open_issue(title: str, body: str, gh_token: str):
