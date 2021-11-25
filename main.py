@@ -46,14 +46,14 @@ def entrypoint(event_dict, pr_branch, gh_token):
 #     print(f"found {len(commits_to_backport)} commits to release.")
 
     new_branch = release(base_branch, pr_branch, pr_number)
-    github_open_pull_request(
+    new_pr_number = github_open_pull_request(
         title=f"chore: release #{pr_number} into {pr_branch}",
         head=new_branch,
         base=pr_branch,
         body=f"An automated release for #{pr_number}.",
         gh_token=gh_token,
     )
-    github_add_label_to_pr(pr_number, pr_branch, gh_token)
+    github_add_label_to_pr(new_pr_number, pr_branch, gh_token)
 
 
 if __name__ == "__main__":
