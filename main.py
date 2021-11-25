@@ -12,6 +12,7 @@ from helpers import (
     git,
     github_get_commits_in_pr,
     github_open_pull_request,
+    github_add_label_to_pr,
     git_setup,
     github_open_issue,
 )
@@ -52,6 +53,7 @@ def entrypoint(event_dict, pr_branch, gh_token):
         body=f"An automated release for #{pr_number}.",
         gh_token=gh_token,
     )
+    github_add_label_to_pr(pr_number, pr_branch, gh_token)
 
 
 if __name__ == "__main__":
