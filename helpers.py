@@ -86,6 +86,7 @@ def github_open_pull_request(title: str, body: str, head: str, base: str, gh_tok
 
     response = requests.post(url=f"{_github_repo_url()}/pulls", json=body, headers=headers)
     response.raise_for_status()
+    response.json()["id"]
 
 
 def github_open_issue(title: str, body: str, gh_token: str):
