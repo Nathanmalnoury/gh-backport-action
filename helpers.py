@@ -97,7 +97,15 @@ def github_open_issue(title: str, body: str, gh_token: str):
 
     response = requests.post(url=f"{_github_repo_url()}/issues", json=body, headers=headers)
     response.raise_for_status()
-
+    
+def github_add_label_to_pr(pr_number: int, label: str, gh_token: str):
+    headers = github_api_headers(gh_token=gh_token)
+    body = {
+        "labels": [label]
+    }
+    
+    response = requests.patch(url=f"{_github_repo_url()}/issues/{pr_number}", json=body, headers=headers)
+    response.raise_for_status()
 
 def github_get_commits_in_pr(pr_number: int, gh_token: str) -> typing.Any:
     headers = github_api_headers(gh_token=gh_token)
