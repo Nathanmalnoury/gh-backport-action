@@ -1,0 +1,24 @@
+[flake8]
+
+exclude =
+    .git,
+    __pycache__,
+    venv,
+    .idea,
+    tests/**,
+extend-ignore=
+  # Bare except. Duplicates with B001
+  E722,
+  # Line break before a binary operator. Black makes theses decisions
+  W503,
+  # Black related: https://github.com/psf/black/issues/315
+  E203,
+  SIM105,
+
+
+max-complexity = 10
+max-expression-complexity=10
+max-cognitive-complexity=10
+statistics = True
+max-line-length = 140
+count=True
