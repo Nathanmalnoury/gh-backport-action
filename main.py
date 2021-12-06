@@ -28,7 +28,7 @@ def backport_commits(commits: typing.List[str], initial_name: str, to_branch: st
     try:
         for commit_hash in commits:
             git("cherry-pick", commit_hash)
-    except:
+    except Exception:
         print("An error occurred while cherry-picking.")
         raise RuntimeError("Could not cherry pick at least one commit automatically.")
 
@@ -76,7 +76,7 @@ if __name__ == "__main__":
             pr_body=args.pr_body,
             gh_token=args.github_token,
         )
-    except Exception as main_exception:
+    except Exception:
         main_traceback = traceback.format_exc()
         traceback_formatted_for_body = f"\n```python\n{main_traceback}```"
         try:
@@ -99,8 +99,8 @@ if __name__ == "__main__":
         except Exception:  # could not get target branch; fallback on next try/except
             pass
         try:
-            title = f"Automatic Backport failed"
-            body = f"Exception occurred when trying to backport a branch.\nCheck `actions` tab to see more."
+            title = "Automatic Backport failed"
+            body = "Exception occurred when trying to backport a branch.\nCheck `actions` tab to see more."
             body += traceback_formatted_for_body
             github_open_issue(title, body, gh_token=args.github_token)
             exit(1)
