@@ -17,17 +17,19 @@ from helpers import (
 )
 
 
-def backport_commits(commits: typing.List[str], initial_name: str, to_branch: str):
+def backport_commits(commits: typing.List[str], initial_name: str, to_branch: str, allow_empty_commits: bool):
     """
     Backport a list of commit on a *new* branch starting from to_branch.
     """
-
+    cherry_pick_args = []
+    if allow_empty_commits:
+        cherry_pick_args.append("--allow-empty")
     new_branch = f"backport-{initial_name[:15]}-{datetime.utcnow().strftime('%m%d%y')}-{to_branch}"
     git("switch", "-c", new_branch, "origin/" + to_branch)
     print(f"Switched to future branch: {new_branch}.")
     try:
         for commit_hash in commits:
-            git("cherry-pick", commit_hash)
+            git("cherry-pick", commit_hash, *cherry_pick_args)
     except Exception:
         print("An error occurred while cherry-picking.")
         raise RuntimeError("Could not cherry pick at least one commit automatically.")
@@ -36,16 +38,17 @@ def backport_commits(commits: typing.List[str], initial_name: str, to_branch: st
     return new_branch
 
 
-def entrypoint(event_dict, pr_branch, pr_title, pr_body, gh_token):
+def entrypoint(event_dict, pr_branch, pr_title, pr_body, gh_token, allow_empty_commits_str):
     base_branch = _get_base_branch(event_dict)
     pr_number = _get_pr_number(event_dict)
+    allow_empty_commits = allow_empty_commits_str.lower().strip() == "true"
 
     commits_to_backport = github_get_commits_in_pr(pr_number=pr_number, gh_token=gh_token)
 
     print(f"found {len(commits_to_backport)} commits to backport.")
     template_vars = {"pr_branch": pr_branch, "pr_number": pr_number, "base_branch": base_branch}
 
-    new_branch = backport_commits(commits_to_backport, base_branch, pr_branch)
+    new_branch = backport_commits(commits_to_backport, base_branch, pr_branch, allow_empty_commits)
     github_open_pull_request(
         title=pr_title.format(**template_vars),
         head=new_branch,
@@ -61,6 +64,7 @@ if __name__ == "__main__":
     parser.add_argument("pr_title", type=str)
     parser.add_argument("pr_body", type=str)
     parser.add_argument("github_token", type=str)
+    parser.add_argument("allow_empty_commits", type=str)
     github_event_path = os.getenv("GITHUB_EVENT_PATH")
 
     with open(github_event_path, "r") as f:
@@ -75,6 +79,7 @@ if __name__ == "__main__":
             pr_title=args.pr_title,
             pr_body=args.pr_body,
             gh_token=args.github_token,
+            allow_empty_commits_str=args.allow_empty_commits,
         )
     except Exception:
         main_traceback = traceback.format_exc()
