@@ -21,7 +21,7 @@ def git(*args):
         output = e.stderr
         try:
             output = output.decode()
-        except:
+        except Exception:
             pass
         raise GitException(output)
 
@@ -29,21 +29,21 @@ def git(*args):
 def _get_base_branch(event_dict: typing.Dict) -> str:
     try:
         return event_dict["pull_request"]["base"]["ref"]
-    except:
+    except Exception:
         raise RuntimeError("pull_request.base.ref not found in GITHUB_EVENT_PATH")
 
 
 def _get_target_branch(event_dict: typing.Dict) -> str:
     try:
         return event_dict["pull_request"]["head"]["ref"]
-    except:
+    except Exception:
         raise RuntimeError("pull_request.head.ref not found in GITHUB_EVENT_PATH")
 
 
 def _get_pr_number(event_dict: typing.Dict) -> int:
     try:
         return event_dict["pull_request"]["number"]
-    except:
+    except Exception:
         raise RuntimeError("pull_request.number not found in GITHUB_EVENT_PATH")
 
 
@@ -64,7 +64,7 @@ def git_setup(github_token):
 def github_api_headers(gh_token):
     return {
         "authorization": f"Bearer {gh_token}",
-        "content-type": f"application/json",
+        "content-type": "application/json",
         "accept": "application/vnd.github.v3+json",
     }
 

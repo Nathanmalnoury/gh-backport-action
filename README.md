@@ -1,6 +1,6 @@
 # gh-backport-action: GitHub action to backport a pull request.
 
-Main features: 
+Main features:
 - Based on cherry-pick-ing on the branch needing the backport.
 - Supports "Merge Commit", "Rebase and Merge" and "Squash and Merge" options.
 - Opens a new PR if success, opens a new Issue if failure.
@@ -33,7 +33,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### Using a label to indicate which PR should be backported: 
+### Using a label to indicate which PR should be backported:
 Each Pull Request labeled `backport develop`, when merged, will be backported on `develop`.
 
 ```yaml
@@ -57,10 +57,10 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-## Backport procedure: 
+## Backport procedure:
 
-When action is triggerred, it first gets the list of commit hashes to backport using GitHub pulls API 
-([#list-commits-on-a-pull-request](https://docs.github.com/en/rest/reference/pulls#list-commits-on-a-pull-request)). This is how all 3 merging options 
+When action is triggerred, it first gets the list of commit hashes to backport using GitHub pulls API
+([#list-commits-on-a-pull-request](https://docs.github.com/en/rest/reference/pulls#list-commits-on-a-pull-request)). This is how all 3 merging options
 are supported, it also means that even in case of a `squash and merge` the full list of commits will be cherry-picked.
 
 Using `git switch`, it then creates a new branch starting on `pr_branch` and then cherry-pick every commit retrieved.
