@@ -8,6 +8,14 @@ inputs:
   github_token:
     description: Token for the GitHub API.
     required: true
+  pr_title:
+    description: 'The title template to give the automatically created backport PRs. Supported template variables are: pr_branch, pr_number, and base_branch'
+    required: false
+    default: 'chore: backport #{pr_number} into {pr_branch}'
+  pr_body:
+    description: 'The body template to give the automatically created backport PRs. Supported template variables are: pr_branch, pr_number, and base_branch'
+    required: false
+    default: 'An automated backport for #{pr_number}.'
 branding:
   icon: chevron-left
   color: gray-dark
@@ -16,4 +24,6 @@ runs:
   image: 'Dockerfile'
   args:
     - ${{ inputs.pr_branch }}
+    - ${{ inputs.pr_title }}
+    - ${{ inputs.pr_body }}
     - ${{ inputs.github_token }}
