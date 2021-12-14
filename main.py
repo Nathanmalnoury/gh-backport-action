@@ -36,7 +36,7 @@ def release(initial_name: str, to_branch: str, pr_number: str):
     return new_branch
 
 
-def entrypoint(event_dict, pr_branch, gh_token):
+def entrypoint(event_dict, pr_branch, pr_title, pr_body, gh_token):
     base_branch = _get_base_branch(event_dict)
     pr_number = _get_pr_number(event_dict)
 
@@ -64,6 +64,8 @@ def entrypoint(event_dict, pr_branch, gh_token):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="automated release GH action.")
     parser.add_argument("pr_branch", type=str)
+    parser.add_argument("pr_title", type=str)
+    parser.add_argument("pr_body", type=str)
     parser.add_argument("github_token", type=str)
     github_event_path = os.getenv("GITHUB_EVENT_PATH")
 
@@ -76,9 +78,11 @@ if __name__ == "__main__":
         entrypoint(
             event_dict=github_event,
             pr_branch=args.pr_branch,
+            pr_title=args.pr_title,
+            pr_body=args.pr_body,
             gh_token=args.github_token,
         )
-    except Exception as main_exception:
+    except Exception:
         main_traceback = traceback.format_exc()
         traceback_formatted_for_body = f"\n```python\n{main_traceback}```"
         try:
@@ -101,8 +105,8 @@ if __name__ == "__main__":
         except Exception:  # could not get target branch; fallback on next try/except
             pass
         try:
-            title = f"Automatic Backport failed"
-            body = f"Exception occurred when trying to release a branch.\nCheck `actions` tab to see more."
+            title = "Automatic Backport failed"
+            body = "Exception occurred when trying to backport a branch.\nCheck `actions` tab to see more."
             body += traceback_formatted_for_body
             github_open_issue(title, body, gh_token=args.github_token)
             exit(1)

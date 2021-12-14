@@ -1,2 +1,2 @@
 #!/bin/sh
-python /action/main.py $*
+python /action/main.py "$@"
