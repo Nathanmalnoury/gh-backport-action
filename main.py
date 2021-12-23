@@ -36,7 +36,7 @@ def release(initial_name: str, to_branch: str, pr_number: str):
     return new_branch
 
 
-def entrypoint(event_dict, pr_branch, gh_token):
+def entrypoint(event_dict, pr_branch, gh_token, last_git_commit_message):
     base_branch = _get_base_branch(event_dict)
     pr_number = _get_pr_number(event_dict)
 
@@ -46,10 +46,8 @@ def entrypoint(event_dict, pr_branch, gh_token):
 
     new_branch = release(base_branch, pr_branch, pr_number)
 
-    # Get last commit message from new_branch
-    pr_title = git("log", "-1", "--pretty=%B")
     # Truncate for PR title
-    pr_title = (pr_title[:75] + '..') if len(pr_title) > 75 else pr_title
+    pr_title = (last_git_commit_message[:75] + '..') if len(last_git_commit_message) > 75 else last_git_commit_message
 
     new_pr_number = github_open_pull_request(
         title=pr_title,
@@ -65,6 +63,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="automated release GH action.")
     parser.add_argument("pr_branch", type=str)
     parser.add_argument("github_token", type=str)
+    parser.add_argument("last_git_commit_message", type=str)
     github_event_path = os.getenv("GITHUB_EVENT_PATH")
 
     with open(github_event_path, "r") as f:
@@ -77,6 +76,7 @@ if __name__ == "__main__":
             event_dict=github_event,
             pr_branch=args.pr_branch,
             gh_token=args.github_token,
+            last_git_commit_message=args.last_git_commit_message
         )
     except Exception as main_exception:
         main_traceback = traceback.format_exc()
