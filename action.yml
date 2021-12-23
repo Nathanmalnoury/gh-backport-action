@@ -17,3 +17,4 @@ runs:
   args:
     - ${{ inputs.pr_branch }}
     - ${{ inputs.github_token }}
+    - ${{ inputs.last_git_commit_message }}
