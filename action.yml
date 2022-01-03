@@ -8,6 +8,9 @@ inputs:
   github_token:
     description: Token for the GitHub API.
     required: true
+  last_git_commit_message:
+    description: Last commit message.
+    required: true
 branding:
   icon: chevron-left
   color: gray-dark
